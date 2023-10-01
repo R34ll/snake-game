@@ -1,7 +1,6 @@
 #pragma once
 #include <vector>
 #include "SDL2/SDL.h"
-#include "SDL2/SDL_ttf.h"
 
 
 class Game
@@ -27,7 +26,7 @@ private:
 
     SDL_Window * window = nullptr;
     SDL_Renderer * renderer = nullptr;
-    SDL_text    
+
 
     enum class Block { head, body, food, empty };
     enum class Move { up, down, left, right };

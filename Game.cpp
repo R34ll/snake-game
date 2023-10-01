@@ -20,29 +20,26 @@ Game::Game()
 
 void Game::Run()
 {
-    // Initialize SDL
     if (SDL_Init(SDL_INIT_VIDEO) < 0)
     {
         cerr << "SDL could not initialize! SDL_Error: " << SDL_GetError() << endl;
         exit(EXIT_FAILURE);
     }
 
-    // Create Window
     window = SDL_CreateWindow("Snake Game", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
-
     if (window == NULL)
     {
         cout << "Window could not be created! SDL_Error: " << SDL_GetError() << endl;
         exit(EXIT_FAILURE);
     }
 
-    // Create renderer
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     if (renderer == NULL)
     {
         cout << "Renderer could not be created! SDL_Error: " << SDL_GetError() << endl;
         exit(EXIT_FAILURE);
     }
+
 
     alive = true;
     running = true;
@@ -173,7 +170,6 @@ void Game::Update()
             break;
     }
 
-    // Wrap
     if (pos.x < 0) pos.x = GRID_WIDTH - 1;
     else if (pos.x > GRID_WIDTH - 1) pos.x = 0;
 
@@ -183,12 +179,10 @@ void Game::Update()
     int new_x = static_cast<int>(pos.x);
     int new_y = static_cast<int>(pos.y);
 
-    // Check if head position has changed
     if (new_x != head.x || new_y != head.y)
     {
         last_dir = dir;
 
-        // If we are growing, just make a new neck
         if (growing > 0)
         {
             size++;
@@ -198,7 +192,6 @@ void Game::Update()
         }
         else
         {
-            // We need to shift the body
             SDL_Point free = head;
             vector<SDL_Point>::reverse_iterator rit = body.rbegin();
             for ( ; rit != body.rend(); ++rit)
@@ -216,7 +209,6 @@ void Game::Update()
     head.y = new_y;
 
     Block & next = grid[head.x][head.y];
-    // Check if there's food over here
     if (next == Block::food)
     {
         score++;
@@ -224,7 +216,7 @@ void Game::Update()
         growing += 1;
         NewFood();
     }
-    // Check if we're dead
+
     else if (next == Block::body)
     {
         alive = false;
@@ -240,21 +232,17 @@ void Game::Render()
     block.w = SCREEN_WIDTH / GRID_WIDTH;
     block.h = SCREEN_WIDTH / GRID_HEIGHT;
 
-    // Clear screen
-    SDL_SetRenderDrawColor(renderer, 0xB3, 0xC6, 0xFF, 0xFF); // background color
+    SDL_SetRenderDrawColor(renderer, 0xB3, 0xC6, 0xFF, 0xFF); 
     SDL_RenderClear(renderer);
 
 
-    // Render food
-    SDL_SetRenderDrawColor(renderer, 0xB3, 0xC6, 0x01, 0xFF); // Food color
+    SDL_SetRenderDrawColor(renderer, 0xFF, 0x5C, 0x33, 0xFF); 
     block.x = food.x * block.w;
     block.y = food.y * block.h;
     SDL_RenderFillRect(renderer, &block);
 
 
-    // Render snake's body
     SDL_SetRenderDrawColor(renderer, 0x01, 0xFF, 0x01, 0x01 );
-
     for (SDL_Point & point : body)
     {
         block.x = point.x * block.w;
@@ -262,7 +250,8 @@ void Game::Render()
         SDL_RenderFillRect(renderer, &block);
     }
 
-    // Render snake's head
+
+
     block.x = head.x * block.w;
     block.y = head.y * block.h;
 
@@ -270,7 +259,6 @@ void Game::Render()
     
     SDL_RenderFillRect(renderer, &block);
 
-    // Update Screen
     SDL_RenderPresent(renderer);
 }
 
